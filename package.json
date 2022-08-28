@@ -1,0 +1,58 @@
+{
+  "name": "yaml-doc-query",
+  "version": "0.0.0-development",
+  "description": "lookup values along with their position in yaml documents",
+  "main": "dist/yamlDocQuery.cjs",
+  "module": "dist/yamlDocQuery.mjs",
+  "types": "dist/yamlDocQuery.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/yamlDocQuery.js",
+      "require": "./dist/yamlDocQuery.cjs",
+      "types": "./dist/yamlDocQuery.d.ts"
+    }
+  },
+  "scripts": {
+    "prepare": "npm run test && npm run build",
+    "pretest": "markdown-to-test ",
+    "test": "jest",
+    "prebuild": "rm -rf dist && tsc",
+    "build": "npm run build:esm && npm run build:cjs",
+    "build:esm": "esbuild src/yamlDocQuery.ts --outfile=dist/yamlDocQuery.mjs --format=esm --target=es2020",
+    "build:cjs": "esbuild src/yamlDocQuery.ts --outfile=dist/yamlDocQuery.cjs --format=cjs --target=es2016"
+  },
+  "jest": {
+    "preset": "ts-jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/Xiphe/yaml-doc-query.git"
+  },
+  "keywords": [
+    "yaml",
+    "sourcemap",
+    "mapped yaml",
+    "yaml position",
+    "yaml location",
+    "yaml document"
+  ],
+  "author": "Hannes Diercks <node@xiphe.net> (https://xiphe.net/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Xiphe/yaml-doc-query/issues"
+  },
+  "homepage": "https://github.com/Xiphe/yaml-doc-query#readme",
+  "devDependencies": {
+    "@types/jest": "28.1.8",
+    "esbuild": "0.15.5",
+    "jest": "28.1.3",
+    "markdown-to-test": "0.3.0",
+    "prettier": "2.7.1",
+    "ts-jest": "28.0.8",
+    "typescript": "4.8.2",
+    "yaml": "2.1.1"
+  },
+  "peerDependencies": {
+    "yaml": "^2"
+  }
+}
