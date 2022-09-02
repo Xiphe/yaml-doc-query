@@ -34,7 +34,7 @@ const $doc = yamlDocQuery(document);
 expect($doc.two[1].five()).toEqual({ value: 5, range: [34, 35, 36] });
 
 /* pass source to get position instead of range */
-expect($doc.two[0](yamlSource)).toEqual({
+expect(yamlDocQuery(document, yamlSource).two[0]()).toEqual({
   value: { three: 4 },
   position: { start: { line: 4, column: 3 }, end: { line: 5, column: 0 } },
 });

@@ -57,9 +57,9 @@ one:
  - two
  - three: four
 `;
-    const $doc = $(parseDocument(source));
+    const $doc = $(parseDocument(source), source);
 
-    expect($doc.one[1].three(source)).toEqual({
+    expect($doc.one[1].three()).toEqual({
       value: 'four',
       position: {
         end: {

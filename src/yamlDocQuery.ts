@@ -9,25 +9,42 @@ export interface Position {
   start: Point;
   end: Point;
 }
-
-export type YmlQuery = {
+export type YmlPosQuery = {
+  (start?: Point, firstCol?: number):
+    | {
+        value: unknown;
+        position?: Position;
+      }
+    | undefined;
+  [key: string | number | symbol]: YmlPosQuery;
+};
+export type YmlRangeQuery = {
   ():
     | {
         value: unknown;
         range?: Range;
       }
     | undefined;
-  (source: string, start?: Point, firstCol?: number):
-    | {
-        value: unknown;
-        position?: Position;
-      }
-    | undefined;
-  [key: string | number | symbol]: YmlQuery;
+  [key: string | number | symbol]: YmlRangeQuery;
 };
 
-export function yamlDocQuery(document: Document, offset: number = 0): YmlQuery {
-  return process(document.contents, document, offset);
+export function yamlDocQuery(
+  document: Document,
+  offset?: number,
+): YmlRangeQuery;
+export function yamlDocQuery(
+  document: Document,
+  source: string,
+  offset?: number,
+): YmlPosQuery;
+export function yamlDocQuery(
+  document: Document,
+  a?: string | number,
+  b?: number,
+): YmlPosQuery | YmlRangeQuery {
+  const source = typeof a === 'string' ? a : undefined;
+  const offset = typeof a === 'number' ? a : typeof b === 'number' ? b : 0;
+  return process(document.contents, document, offset, source);
 }
 
 export default yamlDocQuery;
@@ -36,13 +53,14 @@ export function process(
   node: Node | null | undefined,
   document: Document,
   offset: number = 0,
+  source?: string,
 ): any {
   if (isAlias(node)) {
     node = node.resolve(document);
   }
 
   return new Proxy(
-    (source?: string, start?: Point, firstCol?: number) => {
+    (start?: Point, firstCol?: number) => {
       if (!node) {
         return undefined;
       }
@@ -93,15 +111,16 @@ export function process(
             })?.value,
             document,
             offset,
+            source,
           );
         }
 
         if (isSeq<Node>(node)) {
-          return process(node.items[prop as any], document, offset);
+          return process(node.items[prop as any], document, offset, source);
         }
 
         if (!node) {
-          return process(node, document, offset);
+          return process(node, document, offset, source);
         }
       },
     },
