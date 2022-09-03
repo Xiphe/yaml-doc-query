@@ -1,6 +1,6 @@
 {
   "name": "yaml-doc-query",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "lookup values along with their position in yaml documents",
   "main": "dist/yamlDocQuery.cjs",
   "module": "dist/yamlDocQuery.mjs",
