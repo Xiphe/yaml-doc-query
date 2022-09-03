@@ -7,7 +7,7 @@
   "types": "dist/yamlDocQuery.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/yamlDocQuery.js",
+      "import": "./dist/yamlDocQuery.mjs",
       "require": "./dist/yamlDocQuery.cjs",
       "types": "./dist/yamlDocQuery.d.ts"
     }
