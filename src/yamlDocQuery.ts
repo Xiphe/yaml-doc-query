@@ -88,27 +88,7 @@ export function process(
     {
       get(_, prop): any {
         if (isMap<Node, Node>(node)) {
-          return process(
-            node.items.find(({ key }) => {
-              if (!isScalar(key)) {
-                throw new RangeError(
-                  `Unexpected ${key.constructor.name}`,
-                  key.range || undefined,
-                );
-              }
-              if (!isValidIndexType(key.value)) {
-                throw new RangeError(
-                  `Unexpected ${typeof key.value}`,
-                  key.range || undefined,
-                );
-              }
-
-              return (
-                (typeof key.value === 'number'
-                  ? String(key.value)
-                  : key.value) === prop
-              );
-            })?.value,
+          return process(findNode(prop, node, document)?.value,
             document,
             offset,
             source,
@@ -125,6 +105,37 @@ export function process(
       },
     },
   );
+}
+
+function findNode(prop: string | symbol, node: any, document: Document) : any {
+  const foundItem = node.items.find(({ key, value }: {key:any, value:any}) => {
+    if (!isScalar(key)) {
+      throw new RangeError(
+        `Unexpected ${key.constructor.name}`,
+        key.range || undefined,
+      );
+    }
+    if (!isValidIndexType(key.value)) {
+      throw new RangeError(
+        `Unexpected ${typeof key.value}`,
+        key.range || undefined,
+      );
+    }
+
+    return (
+      (typeof key.value === 'number'
+        ? String(key.value)
+        : key.value) === prop
+    );
+  });
+
+  if (foundItem) {
+    return foundItem;
+  }
+
+  if (document.schema.merge && isAlias(node.items[0]?.value) && node.items[0]?.key.value === '<<') {
+    return findNode(prop, node.items[0].value.resolve(document), document);
+  }
 }
 
 export function toPosition(
