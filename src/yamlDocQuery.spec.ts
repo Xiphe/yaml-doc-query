@@ -51,6 +51,36 @@ describe('yamlDocQuery', () => {
     });
   });
 
+  it('handles aliases merge keys', () => {
+    expect($(parseDocument('[ &x { X: 42 }, Y, <<: *x ]', {merge: true}))[2].X()).toEqual({
+      range: [10, 12, 13],
+      value: 42,
+    });
+  });
+
+  it('handles aliases merge keys properties', () => {
+    expect($(parseDocument(`foo: &BAR
+  bar: 42
+yo:
+  <<: *BAR
+  mama: 4`, {merge: true})).yo.mama()).toEqual({
+      range: [43, 44, 44],
+      value: 4,
+    });
+  });
+
+  it('handles aliases merge keys override properties', () => {
+    expect($(parseDocument(`foo: &BAR
+  bar: 42
+yo:
+  <<: *BAR
+  bar: 69
+  mama: 4`, {merge: true})).yo.bar()).toEqual({
+      range: [42, 44, 45],
+      value: 69,
+    });
+  });
+
   it('gets position when source is made available', () => {
     const source = `
 one:
